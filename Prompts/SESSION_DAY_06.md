@@ -8,10 +8,9 @@
 - [ ] Read `MEMORY.md` — confirm Days 4–5 decisions
 - [ ] Read `PROGRESS.md` — Day 5 complete, Day 6 section
 - [ ] Confirm all tests pass: `mvn test`
-- [ ] Confirm branch: `feature/algorithm-modules-day-4-6`
-  ```
-  git checkout main
-  git checkout feature/algorithm-modules-day-4-6
+- [ ] Confirm branch: `day/06-dp-reoptimiser-brute-force`
+  ```bash
+  git checkout day/06-dp-reoptimiser-brute-force
   ```
 
 ---
@@ -60,7 +59,7 @@ public sealed interface DPOutput extends AlgorithmOutput
 ```
 
 ### 2. DPReoptimiserModule — Held-Karp Implementation
-Implement `com.deliveryoptimizer.algorithm.dp.DPReoptimiserModule`.
+Implement `com.routepulse.algorithm.dp.DPReoptimiserModule`.
 
 **Guard clauses first:**
 ```java
@@ -122,7 +121,7 @@ Backtrack predecessor chain to recover ordering
 State this in the JavaDoc.
 
 ### 3. BruteForceVerifier
-Implement `com.deliveryoptimizer.algorithm.dp.BruteForceVerifier`:
+Implement `com.routepulse.algorithm.dp.BruteForceVerifier`:
 
 ```java
 public VerificationResult verify(DPInput input) {
@@ -172,7 +171,7 @@ public boolean verifiesAgainstDP(DPOutput.Optimised dpResult,
 }
 ```
 
-If verification fails â†’ log `ERROR` with both values and the input state.
+If verification fails -> log `ERROR` with both values and the input state.
 A failing verification in a test is a bug in the DP implementation.
 
 ### 5. Wire QUIET_PERIOD Handler
@@ -235,7 +234,7 @@ Assert no computation occurred (verify via metrics: statesEvaluated = 0).
 - [ ] `QUIET_PERIOD` handler wired — triggers DP for eligible couriers
 - [ ] Shadow route never updated by DP (verified by test)
 - [ ] All DP calls logged to `EventLogStore` with execution time
-- [ ] Phase 2 merged: `main` â†’ `main` â†’ `main`
+- [ ] Phase 2 merged: `main` -> `main` -> `main`
 - [ ] `MEMORY.md` updated
 - [ ] `PROGRESS.md` Day 6 checklist completed
 
@@ -255,8 +254,9 @@ Assert no computation occurred (verify via metrics: statesEvaluated = 0).
 ```bash
 git add .
 git commit -m "day 6: held-karp dp, brute-force verifier, quiet period handler, 5 tests"
+git push origin day/06-dp-reoptimiser-brute-force
 git checkout main
-git merge feature/algorithm-modules-day-4-6
+git merge day/06-dp-reoptimiser-brute-force
 git tag v0.2-phase2-complete
 ```
 

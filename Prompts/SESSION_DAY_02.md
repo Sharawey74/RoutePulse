@@ -8,10 +8,9 @@
 - [ ] Read `MEMORY.md` — confirm Day 1 decisions
 - [ ] Read `PROGRESS.md` — Day 1 complete, Day 2 section
 - [ ] Confirm all Day 1 tests still pass: `mvn test`
-- [ ] Confirm branch: `feature/simulation-engine-day-2-3`
-  ```
-  git checkout main
-  git checkout -b feature/simulation-engine-day-2-3
+- [ ] Confirm branch: `day/02-simulation-engine-event-queue`
+  ```bash
+  git checkout day/02-simulation-engine-event-queue
   ```
 
 ---
@@ -32,7 +31,7 @@ This is the backbone everything plugs into from day 3 onward.
 ## Tasks
 
 ### 1. Event Model
-Define in `com.deliveryoptimizer.simulation.events`:
+Define in `com.routepulse.simulation.events`:
 
 ```
 EventType (enum):
@@ -61,7 +60,7 @@ PriorityEscalationPayload(String orderId)
 ```
 
 ### 2. Event Queue
-Implement `com.deliveryoptimizer.simulation.engine.EventQueue`:
+Implement `com.routepulse.simulation.engine.EventQueue`:
 - Internal: `List<Event>` sorted by: tick ascending, then priority ascending
 - `enqueue(Event)` — inserts in sorted position
 - `dequeue()` — removes and returns head
@@ -74,14 +73,14 @@ this scale. Comment in code: "Sorted ArrayList; suitable for â‰¤200 events.
 Replace with PriorityQueue if queue depth grows beyond 500."
 
 ### 3. SimClock
-Implement `com.deliveryoptimizer.simulation.engine.SimClock`:
-- `currentTick()` â†’ `SimulatedTick`
+Implement `com.routepulse.simulation.engine.SimClock`:
+- `currentTick()` -> `SimulatedTick`
 - `advance()` — increments tick by 1
 - `reset()` — returns to tick 0
 - Immutable from outside — only simulation engine calls `advance()`
 
 ### 4. QuietPeriodMonitor
-Implement `com.deliveryoptimizer.simulation.engine.QuietPeriodMonitor`:
+Implement `com.routepulse.simulation.engine.QuietPeriodMonitor`:
 - `ticksSinceLastDisruption` counter
 - `recordDisruption()` — resets counter to 0
 - `tick()` — increments counter
@@ -90,7 +89,7 @@ Implement `com.deliveryoptimizer.simulation.engine.QuietPeriodMonitor`:
 - Default threshold: configurable via `SimulationConfig` (default: 5)
 
 ### 5. Mutation Types
-Define `com.deliveryoptimizer.simulation.engine.Mutation` as a
+Define `com.routepulse.simulation.engine.Mutation` as a
 sealed interface with initial permitted types:
 
 ```java
@@ -107,7 +106,7 @@ sealed interface Mutation permits
 Each type as a Java `record`.
 
 ### 6. MutationApplier
-Implement `com.deliveryoptimizer.simulation.engine.MutationApplier`:
+Implement `com.routepulse.simulation.engine.MutationApplier`:
 - `apply(Mutation mutation, StateLayer state)` — dispatches by type
 - All cases **no-op** for now (log mutation type and return)
 - Uses pattern matching on sealed interface:
@@ -120,32 +119,32 @@ Implement `com.deliveryoptimizer.simulation.engine.MutationApplier`:
   ```
 
 ### 7. EventDispatcher
-Implement `com.deliveryoptimizer.simulation.engine.EventDispatcher`:
-- `dispatch(Event event)` â†’ `Mutation`
+Implement `com.routepulse.simulation.engine.EventDispatcher`:
+- `dispatch(Event event)` -> `Mutation`
 - One handler method per event type
 - All handlers: log event type + tick, return `NoOpMutation`
 - Comment each handler with the algorithm chain it will execute from day 3
 
 ### 8. SimulationEngine
-Implement `com.deliveryoptimizer.simulation.engine.SimulationEngine`:
+Implement `com.routepulse.simulation.engine.SimulationEngine`:
 - Dependencies (injected via constructor): `EventQueue`, `SimClock`,
   `EventDispatcher`, `MutationApplier`, `QuietPeriodMonitor`
 - `step()`:
-  1. If queue empty â†’ return current state snapshot (no-op)
+  1. If queue empty -> return current state snapshot (no-op)
   2. Dequeue next event
-  3. `dispatcher.dispatch(event)` â†’ mutation
+  3. `dispatcher.dispatch(event)` -> mutation
   4. `applier.apply(mutation, state)`
   5. `monitor.recordDisruption()` if event is not QUIET_PERIOD
   6. `monitor.tick()`
-  7. If `monitor.isQuietPeriodReached(threshold)` â†’ enqueue QUIET_PERIOD
+  7. If `monitor.isQuietPeriodReached(threshold)` -> enqueue QUIET_PERIOD
   8. `clock.advance()`
   9. Return state snapshot
 - `run(int ticks)` — calls `step()` n times
 - `reset()` — reinitializes all state, reloads scenario
 
 ### 9. ScenarioLoader
-Implement `com.deliveryoptimizer.simulation.scenario.ScenarioLoader`:
-- `load(String scenarioName)` â†’ `ScenarioDefinition`
+Implement `com.routepulse.simulation.scenario.ScenarioLoader`:
+- `load(String scenarioName)` -> `ScenarioDefinition`
 - Reads from `src/main/resources/scenarios/{name}.json`
 - `ScenarioDefinition`: graph config, courier config, order schedule
   (tick + order payload), disruption event schedule
@@ -187,11 +186,12 @@ Run a manual test (no JUnit yet — verified by logging):
 
 ## Post-Session
 
-```
+```bash
 git add .
 git commit -m "day 2: simulation engine, event queue, simclock, dispatcher skeleton"
+git push origin day/02-simulation-engine-event-queue
 git checkout main
-git merge feature/simulation-engine-day-2-3
+git merge day/02-simulation-engine-event-queue
 ```
 
 Update `MEMORY.md` and `PROGRESS.md` before closing.

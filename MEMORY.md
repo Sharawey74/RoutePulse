@@ -11,29 +11,33 @@
 | Type | Discrete-event simulation |
 | Course | Computing Algorithms — Group Project |
 | Plan Document | AI-Based Delivery Optimizer — Professional End-to-End Project Plan |
+| Repository | RoutePulse (github: Sharawey74/RoutePulse) |
 | Total Duration | 10 days |
-| Current Day | 0 (not started) |
-| Current Phase | Pre-implementation |
-| Current Branch | — |
+| Current Day | 1 (complete) |
+| Current Phase | Phase 1 — Foundation |
+| Current Branch | `day/01-domain-graph-dijkstra` (merged to main at session end) |
 
 ---
 
 ## Repository Structure
 
 ```
-delivery-optimizer/
-├── backend/               (Java 21 + Spring Boot 3.3)
-│   ├── src/main/java/com/deliveryoptimizer/
-│   │   ├── algorithm/     (pure function modules)
-│   │   ├── simulation/    (engine, events, scenario)
-│   │   ├── state/         (all mutable state)
-│   │   ├── api/           (controllers, DTOs, SSE)
-│   │   ├── domain/        (value objects, entities)
-│   │   ├── config/        (Spring config, params)
-│   │   └── reporting/     (report generation)
-│   ├── src/test/java/
-│   └── pom.xml
-├── frontend/              (React 18 + Vite + Tailwind + TS)
+RoutePulse/
+├── src/main/java/com/routepulse/
+│   ├── platform/          (RoutepulseApplication.java — Spring Boot entry point)
+│   ├── algorithm/         (pure function modules: dijkstra, greedy, dp, binpacking)
+│   ├── simulation/        (engine, events, scenario, dispatcher)
+│   ├── state/             (all mutable state + snapshot)
+│   ├── api/               (controllers, DTOs, SSE)
+│   ├── domain/            (value objects, entities)
+│   ├── config/            (SimulationConfig @ConfigurationProperties)
+│   └── reporting/         (ReportGenerator, ShiftReport)
+├── src/main/resources/
+│   ├── application.yaml   (simulation.* properties)
+│   ├── graphs/            (demo_graph.json)
+│   └── scenarios/         (rush_hour.json, road_closure.json)
+├── src/test/java/com/routepulse/
+├── frontend/              (React 18 + Vite + Tailwind + TS — created Day 7)
 │   ├── src/
 │   │   ├── components/
 │   │   ├── context/
@@ -41,9 +45,10 @@ delivery-optimizer/
 │   │   └── types/
 │   ├── package.json
 │   └── vite.config.ts
-├── docker-compose.yml
-├── Makefile
-├── SYSTEM_PROMPT.md
+├── pom.xml                (Spring Boot 3.5.14, Java 21, Lombok)
+├── docker-compose.yml     (populated Day 10)
+├── Makefile               (populated Day 10)
+├── SYSTEM_INSTRUCTIONS.md
 ├── MEMORY.md
 └── PROGRESS.md
 ```
@@ -83,6 +88,8 @@ making the quality gap chart visually distinct.
 ---
 
 ## Algorithm Interface Contract
+
+Package: `com.routepulse.algorithm.api`
 
 ```java
 public interface AlgorithmModule<I extends AlgorithmInput,
@@ -152,13 +159,26 @@ algorithms only through this interface.
 
 ## Open Issues / Blockers
 
-_None — project not started_
+_None — Day 1 passed all verification gates cleanly._
 
 ---
 
 ## Completed Modules
 
-_None — project not started_
+| Module | Package | Status |
+|---|---|---|
+| `AlgorithmModule<I,O>` interface | `com.routepulse.algorithm.api` | ✅ Complete |
+| `AlgorithmInput`, `AlgorithmOutput`, `Mutation` (sealed), `MetricsRecord`, `AlgorithmComplexity` | `com.routepulse.algorithm.api` | ✅ Complete |
+| `NodeId`, `CourierId`, `Distance`, `SimulatedTick` | `com.routepulse.domain` | ✅ Complete |
+| `Node`, `Edge`, `Order`, `Courier`, `Route`, `Stop`, `CargoItem`, `CargoCapacity` | `com.routepulse.domain` | ✅ Complete |
+| `OrderPriority`, `StopStatus`, `CourierStatus` enums | `com.routepulse.domain` | ✅ Complete |
+| `SimulationConfig` | `com.routepulse.config` | ✅ Complete |
+| `GraphStore` | `com.routepulse.state` | ✅ Complete |
+| `DistanceMatrix` | `com.routepulse.state` | ✅ Complete |
+| `GraphLoader` | `com.routepulse.state` | ✅ Complete |
+| `DijkstraInput`, `DijkstraOutput`, `DijkstraMetrics` | `com.routepulse.algorithm.dijkstra` | ✅ Complete |
+| `DijkstraModule` | `com.routepulse.algorithm.dijkstra` | ✅ Complete |
+| `demo_graph.json` | `src/main/resources/graphs/` | ✅ Complete |
 
 ---
 
@@ -166,15 +186,27 @@ _None — project not started_
 
 | Module | Unit Tests | Integration Tests | Status |
 |---|---|---|---|
-| DijkstraModule | 0/3 | — | Not started |
+| DijkstraModule | 3/3 ✅ | — | Complete |
 | GreedyInsertionModule | 0/3 | — | Not started |
 | DPReoptimiserModule | 0/4 | — | Not started |
 | BinPackingModule | 0/3 | — | Not started |
 | SimulationEngine | — | 0/2 | Not started |
 | EventDispatcher | — | 0/1 | Not started |
+| SpringBootContext | — | 1/1 ✅ | Complete |
 
 ---
 
+## Day 1 Design Decisions
+
+| Decision | Rationale | Date |
+|---|---|---|
+| `Mutation` sealed interface starts with only `NoOpMutation` | Future mutation types (EdgeWeightMutation, etc.) added as new permits per OCP | Day 1 |
+| `Edge.withWeight()` returns new Edge (immutable) | Records are immutable; mutation applied by MutationApplier via GraphStore | Day 1 |
+| `GraphStore` returns `Collections.unmodifiableList` from `getNeighbors()` | Prevents algorithm modules from accidentally mutating live graph state | Day 1 |
+| Demo graph: 28 nodes, 86 directed edges, bridge weight 18 | 2 bridge edges (13↔14, weight 18) guarantee DP outperforms greedy by >10% on cross-cluster orders | Day 1 |
+| `GraphLoader` runs Dijkstra from all nodes at startup (O(N×(V+E)logV)) | Acceptable at 30-node scale; eliminates runtime latency for first-tick distance lookups | Day 1 |
+| `DijkstraInput` deep-copies adjacency map and node set | Guarantees algorithm purity even if GraphStore is mutated concurrently in future | Day 1 |
+
 ## Last Updated
 
-Day 0 — Initial setup. Project not yet started.
+Day 1 — Domain model, Graph store, Dijkstra module, and 3/3 unit tests passing.

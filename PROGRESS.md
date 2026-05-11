@@ -7,11 +7,11 @@
 
 | Phase | Days | Status | Branch |
 |---|---|---|---|
-| Phase 1 — Foundation | 1–3 | Not started | `main` |
-| Phase 2 — Core Algorithms | 4–6 | Not started | `main` |
-| Phase 3 — Integration | 7–8 | Not started | `main` |
-| Phase 4 — Frontend | 7–9 | Not started | `main` |
-| Phase 5 — Polish \u0026 Delivery | 10 | Not started | `main` |
+| Phase 1 — Foundation | 1–3 | [ ] Planned | `day/01`, `day/02`, `day/03` |
+| Phase 2 — Core Algorithms | 4–6 | [ ] Planned | `day/04`, `day/05`, `day/06` |
+| Phase 3 — Integration | 7–8 | [ ] Planned | `day/07`, `day/08` |
+| Phase 4 — Frontend | 7–9 | [ ] Planned | `day/07`, `day/08`, `day/09` |
+| Phase 5 — Polish \u0026 Delivery | 10 | [ ] Planned | `day/10` |
 
 ---
 
@@ -20,33 +20,37 @@
 ---
 
 ### Day 1 — Domain Model + Graph + Dijkstra
-**Branch:** `feature/domain-and-graph-day-1` (from `main`)
-**Status:** ⬜ Not started
+**Branch:** `day/01-domain-graph-dijkstra` (from `main`)
+**Status:** ✅ Complete
 
 #### Checklist
-- [ ] Value objects defined: `NodeId`, `CourierId`, `Distance`, `SimulatedTick`
-- [ ] Domain classes defined: `Node`, `Edge`, `Order`, `Courier`, `Route`, `Stop`, `CargoItem`
-- [ ] `AlgorithmModule<I,O>` interface defined
-- [ ] `AlgorithmInput`, `AlgorithmOutput`, `Mutation`, `MetricsRecord` interfaces defined
-- [ ] `DijkstraInput`, `DijkstraOutput` defined
-- [ ] `DijkstraModule` implemented (pure function)
-- [ ] `GraphStore` implemented (adjacency list)
-- [ ] 30×30 distance matrix pre-computed on init
-- [ ] Unit test 1: Known 8-node graph — all shortest paths correct
-- [ ] Unit test 2: Disconnected graph — unreachable nodes return MAX_VALUE
-- [ ] Unit test 3: Edge weight change — only affected paths update
-- [ ] All 3 Dijkstra tests passing (`mvn test`)
-- [ ] No imports from simulation or API package in algorithm package
-- [ ] `MEMORY.md` updated
-- [ ] `PROGRESS.md` updated
+- [x] Value objects defined: `NodeId`, `CourierId`, `Distance`, `SimulatedTick`
+- [x] Domain classes defined: `Node`, `Edge`, `Order`, `Courier`, `Route`, `Stop`, `CargoItem`, `CargoCapacity`
+- [x] `AlgorithmModule<I,O>` interface defined
+- [x] `AlgorithmInput`, `AlgorithmOutput`, `Mutation` (sealed), `MetricsRecord`, `AlgorithmComplexity` interfaces defined
+- [x] `DijkstraInput`, `DijkstraOutput`, `DijkstraMetrics` defined
+- [x] `DijkstraModule` implemented (pure function, binary min-heap, O((V+E)logV))
+- [x] `GraphStore` implemented (adjacency list, mutation-only via MutationApplier contract)
+- [x] `DistanceMatrix` (30×30) pre-computed on init via `GraphLoader`
+- [x] Unit test 1: Known 8-node graph — all shortest paths correct (7 assertions + predecessor verification)
+- [x] Unit test 2: Disconnected graph — unreachable node 7 returns `Double.MAX_VALUE`, all others reachable
+- [x] Unit test 3: Edge weight change — new shortest path computed, predecessor updated, downstream paths correct
+- [x] All 3 Dijkstra tests passing (`mvn test` — Tests run: 4, Failures: 0, Errors: 0)
+- [x] No imports from simulation or API package in algorithm package (verified)
+- [x] `SimulationConfig` bound to `application.yaml` simulation.* properties
+- [x] `GraphLoader` loads demo_graph.json (28 nodes, 86 edges, two-cluster topology, bridge weight 18)
+- [x] `MEMORY.md` updated
+- [x] `PROGRESS.md` updated
 
 #### Notes
-_Fill during session_
+- Spring Boot context test also passes — graph loads cleanly at startup
+- Demo graph: District A nodes 1–12 + A-Hub(27), District B nodes 15–26, Depot(0), Bridge nodes 13–14
+- Bridge edges weight 18 — guarantees DP vs Greedy quality gap ≥10% on cross-cluster scenarios
 
 ---
 
 ### Day 2 — Simulation Engine + Event Queue
-**Branch:** `feature/simulation-engine-day-2-3` (from `main`)
+**Branch:** `day/02-engine-event-queue` (from `main`)
 **Status:** ⬜ Not started
 
 #### Checklist
@@ -72,7 +76,7 @@ _Fill during session_
 ---
 
 ### Day 3 — Disruption Events + State Layer + API Skeleton
-**Branch:** `feature/simulation-engine-day-2-3` (from `main`)
+**Branch:** `day/03-engine-state-dtos` (from `main`)
 **Status:** ⬜ Not started
 
 #### Checklist
@@ -98,7 +102,7 @@ _Fill during session_
 ---
 
 ### Day 4 — Greedy Insertion + Order Registry + Shadow Routes
-**Branch:** `feature/algorithm-modules-day-4-6` (from `main`)
+**Branch:** `day/04-greedy-insertion` (from `main`)
 **Status:** ⬜ Not started
 
 #### Checklist
@@ -125,7 +129,7 @@ _Fill during session_
 ---
 
 ### Day 5 — Bin Packing (All 3 Strategies)
-**Branch:** `feature/algorithm-modules-day-4-6` (from `main`)
+**Branch:** `day/05-bin-packing-strategies` (from `main`)
 **Status:** ⬜ Not started
 
 #### Checklist
@@ -153,7 +157,7 @@ _Fill during session_
 ---
 
 ### Day 6 — DP Re-optimizer + Brute-Force Verifier
-**Branch:** `feature/algorithm-modules-day-4-6` (from `main`)
+**Branch:** `day/06-dp-reoptimiser-brute-force` (from `main`)
 **Status:** ⬜ Not started
 
 #### Checklist
@@ -229,11 +233,8 @@ _Fill during session_
 ---
 
 ### Day 8 — Backend: Metrics + Report | Frontend: Map + Event Log
-**Two parallel branches:**
-- Backend: `feature/backend-integration-metrics-day-7-8` (from `main`)
-- Frontend: `feature/frontend-ui-day-7-10` (from `main`)
-
 **Status:** ⬜ Not started
+**Branch:** `day/08-metrics-report-map-canvas` (from `main`)
 
 #### Backend Checklist
 - [ ] `MetricsStore` tick-by-tick snapshot accumulation implemented
@@ -268,7 +269,7 @@ _Fill during session_
 ---
 
 ### Day 9 — Frontend: Charts + Metrics Panels + Report Modal
-**Branch:** `feature/frontend-ui-day-7-10` (from `main`)
+**Branch:** `day/09-frontend-charts-panels` (from `main`)
 **Status:** ⬜ Not started
 
 #### Checklist
@@ -295,7 +296,7 @@ _Fill during session_
 ---
 
 ### Day 10 — Scenarios + Polish + Delivery
-**Branch:** `feature/frontend-ui-day-7-10` (from `main`)
+**Branch:** `day/10-scenarios-polish-delivery` (from `main`)
 **Status:** ⬜ Not started
 
 #### Checklist

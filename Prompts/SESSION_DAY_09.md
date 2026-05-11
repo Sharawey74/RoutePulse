@@ -9,10 +9,9 @@
 - [ ] Read `PROGRESS.md` — Day 8 complete, Day 9 section
 - [ ] Backend running: `mvn spring-boot:run` — no errors
 - [ ] Frontend: `npm run dev` — map and event log working
-- [ ] Confirm branch: `day/9-frontend-charts-panels`
+- [ ] Confirm branch: `day/09-frontend-charts-panels`
   ```bash
-  git checkout phase/4-frontend
-  git checkout -b day/9-frontend-charts-panels
+  git checkout day/09-frontend-charts-panels
   ```
 
 ---
@@ -347,15 +346,13 @@ selector UI and the init call.
 ## Phase 4 Merge Protocol (End of Day 9)
 
 ```bash
+```bash
 git add .
 git commit -m "day 9: route quality chart, greedy vs dp panel, bin packing panel,
                dp table viewer, report modal, tabbed layout"
-git checkout phase/4-frontend
-git merge day/9-frontend-charts-panels
-git checkout develop
-git merge phase/4-frontend
+git push origin day/09-frontend-charts-panels
 git checkout main
-git merge develop
+git merge day/09-frontend-charts-panels
 git tag v0.4-phase4-complete
 ```
 

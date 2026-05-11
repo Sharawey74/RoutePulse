@@ -8,10 +8,9 @@
 - [ ] Read `MEMORY.md` — confirm Phase 1 decisions
 - [ ] Read `PROGRESS.md` — Phase 1 complete, Day 4 section
 - [ ] Confirm all previous tests pass: `mvn test`
-- [ ] Confirm branch: `feature/algorithm-modules-day-4-6`
-  ```
-  git checkout main
-  git checkout feature/algorithm-modules-day-4-6
+- [ ] Confirm branch: `day/04-greedy-insertion-shadow-routes`
+  ```bash
+  git checkout day/04-greedy-insertion-shadow-routes
   ```
 
 ---
@@ -32,7 +31,7 @@ and prove the O(k×m) complexity claim with a measured test.
 ## Tasks
 
 ### 1. Greedy Insertion Module
-Implement `com.deliveryoptimizer.algorithm.greedy.GreedyInsertionModule`
+Implement `com.routepulse.algorithm.greedy.GreedyInsertionModule`
 implementing `AlgorithmModule<InsertionInput, InsertionOutput>`.
 
 **Algorithm (insertion cost formula):**
@@ -69,10 +68,10 @@ constant in `SimulationConfig`.
 State this in the class JavaDoc and in a comment at the loop head.
 
 ### 2. Order Registry — Full Implementation
-Complete `com.deliveryoptimizer.state.OrderRegistry`:
-- Add `assignOrder(orderId, courierId)` — transitions PENDING â†’ ASSIGNED
-- Add `startDelivery(orderId)` — transitions ASSIGNED â†’ IN_TRANSIT
-- Add `completeDelivery(orderId)` — transitions IN_TRANSIT â†’ DELIVERED
+Complete `com.routepulse.state.OrderRegistry`:
+- Add `assignOrder(orderId, courierId)` — transitions PENDING -> ASSIGNED
+- Add `startDelivery(orderId)` — transitions ASSIGNED -> IN_TRANSIT
+- Add `completeDelivery(orderId)` — transitions IN_TRANSIT -> DELIVERED
 - All transitions validated — invalid transitions throw
   `IllegalStateTransitionException` with descriptive message
 
@@ -93,9 +92,9 @@ In `EventDispatcher`, implement `handleNewOrder(NewOrderPayload)`:
 ```
 1. Take SystemStateSnapshot
 2. Call GreedyInsertionModule.solve(InsertionInput)
-3. If noValidInsertion â†’ log warning, return NoOpMutation
+3. If noValidInsertion -> log warning, return NoOpMutation
 4. Call BinPackingModule.validateCapacity(...) [DAY 5 — stub today]
-5. Update OrderRegistry: PENDING â†’ ASSIGNED
+5. Update OrderRegistry: PENDING -> ASSIGNED
 6. Return composite mutation: RouteInsertionMutation + ShadowInsertionMutation
 ```
 
@@ -106,8 +105,8 @@ Real bin packing implementation is day 5.
 ```
 1. Find order's current courier and position in route
 2. Call GreedyInsertionModule.solve() with priority weight flag
-3. If new position is earlier than current â†’ return RouteReorderMutation
-4. If no improvement â†’ return NoOpMutation (log: "escalation no improvement")
+3. If new position is earlier than current -> return RouteReorderMutation
+4. If no improvement -> return NoOpMutation (log: "escalation no improvement")
 ```
 
 ### 6. Normalized Quality Metric
@@ -184,11 +183,12 @@ places it earlier in the route (higher detour cost accepted).
 
 ## Post-Session
 
-```
+```bash
 git add .
 git commit -m "day 4: greedy insertion module, order registry, shadow routes, 4 tests"
+git push origin day/04-greedy-insertion-shadow-routes
 git checkout main
-git merge feature/algorithm-modules-day-4-6
+git merge day/04-greedy-insertion-shadow-routes
 ```
 
 Update `MEMORY.md` and `PROGRESS.md` before closing.
