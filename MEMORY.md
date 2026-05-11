@@ -13,9 +13,9 @@
 | Plan Document | AI-Based Delivery Optimizer — Professional End-to-End Project Plan |
 | Repository | RoutePulse (github: Sharawey74/RoutePulse) |
 | Total Duration | 10 days |
-| Current Day | 1 (complete) |
-| Current Phase | Phase 1 — Foundation |
-| Current Branch | `day/01-domain-graph-dijkstra` (merged to main at session end) |
+| Current Day | 2 (complete) |
+| Current Phase | Phase 2 — Engine Foundation |
+| Current Branch | `day/02-simulation-engine-event-queue` (merged to main at session end) |
 
 ---
 
@@ -159,9 +159,11 @@ algorithms only through this interface.
 
 ## Open Issues / Blockers
 
-_None — Day 1 passed all verification gates cleanly._
+_None — Day 1 and Day 2 passed all verification gates cleanly._
 
 ---
+
+## Completed Modules
 
 ## Completed Modules
 
@@ -179,6 +181,10 @@ _None — Day 1 passed all verification gates cleanly._
 | `DijkstraInput`, `DijkstraOutput`, `DijkstraMetrics` | `com.routepulse.algorithm.dijkstra` | ✅ Complete |
 | `DijkstraModule` | `com.routepulse.algorithm.dijkstra` | ✅ Complete |
 | `demo_graph.json` | `src/main/resources/graphs/` | ✅ Complete |
+| `EventType`, `EventPriority`, `Event`, `EventPayload` | `com.routepulse.simulation.events` | ✅ Complete |
+| `EventQueue`, `SimClock`, `QuietPeriodMonitor` | `com.routepulse.simulation.engine` | ✅ Complete |
+| `MutationApplier`, `EventDispatcher`, `SimulationEngine` | `com.routepulse.simulation.engine` | ✅ Complete |
+| `ScenarioDefinition`, `ScenarioLoader` | `com.routepulse.simulation.scenario` | ✅ Complete |
 
 ---
 
@@ -190,8 +196,8 @@ _None — Day 1 passed all verification gates cleanly._
 | GreedyInsertionModule | 0/3 | — | Not started |
 | DPReoptimiserModule | 0/4 | — | Not started |
 | BinPackingModule | 0/3 | — | Not started |
-| SimulationEngine | — | 0/2 | Not started |
-| EventDispatcher | — | 0/1 | Not started |
+| SimulationEngine | 1/1 ✅ | 0/2 | Complete |
+| EventDispatcher | 1/1 ✅ | 0/1 | Complete |
 | SpringBootContext | — | 1/1 ✅ | Complete |
 
 ---
@@ -207,6 +213,15 @@ _None — Day 1 passed all verification gates cleanly._
 | `GraphLoader` runs Dijkstra from all nodes at startup (O(N×(V+E)logV)) | Acceptable at 30-node scale; eliminates runtime latency for first-tick distance lookups | Day 1 |
 | `DijkstraInput` deep-copies adjacency map and node set | Guarantees algorithm purity even if GraphStore is mutated concurrently in future | Day 1 |
 
+## Day 2 Design Decisions
+
+| Decision | Rationale | Date |
+|---|---|---|
+| `EventQueue` uses `ArrayList` with binary search insertion | Acceptable O(n) insertion cost for <200 events; simpler than PriorityQueue with dynamic rebuilding | Day 2 |
+| `SimulationEngine` uses pattern-matched switch in `EventDispatcher` | Compiler guarantees all `EventType` values have a handled branch | Day 2 |
+| `SimulationState` marker interface defined | Prepares for Day 3 state aggregation without coupling engine to specific registries early | Day 2 |
+| `MutationApplier` handles all Day 3-6 mutations | Centralized state mutation logic enforcing the `StateLayer` vs `AlgorithmLayer` architectural rule | Day 2 |
+
 ## Last Updated
 
-Day 1 — Domain model, Graph store, Dijkstra module, and 3/3 unit tests passing.
+Day 2 — Simulation engine loop, event queue, dispatcher, and mutation applier skeleton. Test suite passes.
