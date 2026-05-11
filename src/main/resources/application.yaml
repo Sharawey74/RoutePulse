@@ -1,3 +1,13 @@
 spring:
   application:
     name: routepulse
+
+simulation:
+  max-ticks: 100
+  dp-stop-cap: 10
+  quiet-period-ticks: 5
+  dp-budget-ms: 200
+  max-couriers: 6
+  brute-force-cap-stops: 5
+  priority-weight: 2.0
+  min-improvement-threshold: 0.5

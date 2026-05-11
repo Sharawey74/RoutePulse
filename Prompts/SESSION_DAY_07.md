@@ -12,14 +12,12 @@
 
 **Backend:**
 ```bash
-git checkout main
-git checkout -b feature/backend-integration-metrics-day-7-8
+git checkout day/07-backend-sse-frontend-setup
 ```
 
 **Frontend:**
 ```bash
-git checkout main
-git checkout -b feature/frontend-ui-day-7-10
+# Frontend work starts in the same branch
 ```
 
 Work can proceed in parallel if two team members are available.
@@ -50,10 +48,10 @@ All 6 handlers must now call real algorithm modules:
 
 | Handler | Algorithm Chain |
 |---|---|
-| `NEW_ORDER` | GreedyInsertion â†’ BinPackingValidation â†’ ShadowUpdate |
-| `ROAD_WEIGHT_CHANGE` | Dijkstra(affected) â†’ DistanceMatrix |
-| `ROAD_REMOVAL` | Dijkstra(affected couriers) â†’ RouteRecheck |
-| `VEHICLE_BREAKDOWN` | CourierDeactivate â†’ BinPackingFFD â†’ GreedyInsertion(each) |
+| `NEW_ORDER` | GreedyInsertion -> BinPackingValidation -> ShadowUpdate |
+| `ROAD_WEIGHT_CHANGE` | Dijkstra(affected) -> DistanceMatrix |
+| `ROAD_REMOVAL` | Dijkstra(affected couriers) -> RouteRecheck |
+| `VEHICLE_BREAKDOWN` | CourierDeactivate -> BinPackingFFD -> GreedyInsertion(each) |
 | `PRIORITY_ESCALATION` | GreedyInsertion(weighted) |
 | `QUIET_PERIOD` | DPReoptimiser(eligible couriers) |
 
@@ -136,7 +134,7 @@ public SseEmitter stream() {
 `SseService.push(StateSnapshotDto)`:
 - Serializes to JSON
 - Sends to all active emitters as event name `stateUpdate`
-- On send failure â†’ remove emitter from list (client disconnected)
+- On send failure -> remove emitter from list (client disconnected)
 
 `SimulationEngine.step()` calls `sseService.push(snapshot)` after
 each `MutationApplier.apply()` call.
@@ -289,17 +287,12 @@ Open browser. Click "Step" 5 times. Verify:
 ## Post-Session
 
 ```bash
-# Backend
+# Day 7
 git add .
-git commit -m "day 7 backend: full dispatcher wiring, SSE, integration tests"
+git commit -m "day 7: full dispatcher wiring, SSE, integration tests, vite setup"
+git push origin day/07-backend-sse-frontend-setup
 git checkout main
-git merge feature/backend-integration-metrics-day-7-8
-
-# Frontend
-git add .
-git commit -m "day 7 frontend: vite setup, sse provider, control panel"
-git checkout main
-git merge feature/frontend-ui-day-7-10
+git merge day/07-backend-sse-frontend-setup
 ```
 
 Update `MEMORY.md` and `PROGRESS.md` before closing.

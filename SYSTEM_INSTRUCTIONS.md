@@ -163,7 +163,7 @@ Presentation  →  API Layer  →  Simulation Engine
 ## Technology Stack — Fixed
 
 ```
-Backend:        Java 21 + Spring Boot 3.3 + Maven
+Backend:        Java 21 + Spring Boot 3.5.14 + Maven
 Frontend:       React 18 + Vite 5 + Tailwind CSS 3 + TypeScript
 Charts:         Chart.js 4
 Map:            HTML Canvas (native, no Leaflet)
@@ -171,22 +171,30 @@ Communication:  REST (control) + SSE (state push)
 Storage:        In-memory Java heap + JSON file export
 Testing:        JUnit 5 + AssertJ (backend), Vitest (frontend)
 Deployment:     Docker Compose (local), Vercel (FE), Railway (BE)
+Package root:   com.routepulse
+Main class:     com.routepulse.platform.RoutepulseApplication
 ```
 
 ---
 
 ## Branching Strategy
 
-The following branches are available in this repository:
+One branch per development day. All branches are pre-created from `main`.
+Merge each day branch back to `main` at session end.
 
-- `main`: stable releases only (merge at end of each phase)
-- `feature/domain-and-graph-day-1`: (Days 1) Domain model and Dijkstra
-- `feature/simulation-engine-day-2-3`: (Days 2–3) Simulation engine and state layer
-- `feature/algorithm-modules-day-4-6`: (Days 4–6) Greedy, Bin Packing, and DP modules
-- `feature/backend-integration-metrics-day-7-8`: (Days 7–8) Backend integration and metrics
-- `feature/frontend-ui-day-7-10`: (Days 7–10) Frontend development and polish
-
-Branch from `main`. Merge feature branches back to `main` at completion.
+| Branch | Day | Focus |
+|---|---|---|
+| `main` | — | Stable releases only — merge at end of each day |
+| `day/01-domain-graph-dijkstra` | Day 1 | Domain model, Graph store, Dijkstra |
+| `day/02-simulation-engine-event-queue` | Day 2 | Simulation engine, Event queue |
+| `day/03-state-layer-api-skeleton` | Day 3 | State layer, Spring Boot API skeleton |
+| `day/04-greedy-insertion-shadow-routes` | Day 4 | Greedy insertion, Shadow routes |
+| `day/05-bin-packing-strategies` | Day 5 | Bin packing — FF, BF, FFD |
+| `day/06-dp-reoptimiser-brute-force` | Day 6 | DP re-optimizer, Brute-force verifier |
+| `day/07-backend-sse-frontend-setup` | Day 7 | Full integration, SSE, Frontend init |
+| `day/08-metrics-report-map-canvas` | Day 8 | Metrics, Report, Map canvas, Event log |
+| `day/09-frontend-charts-panels` | Day 9 | Charts, Panels, Report modal |
+| `day/10-scenarios-polish-delivery` | Day 10 | Scenarios, Polish, Final delivery |
 
 ---
 

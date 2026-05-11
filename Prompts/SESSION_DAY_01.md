@@ -5,13 +5,12 @@
 
 ## Pre-Session Checklist
 
-- [ ] Read `SYSTEM_PROMPT.md` fully
+- [ ] Read `SYSTEM_INSTRUCTIONS.md` fully
 - [ ] Read `MEMORY.md` fully
 - [ ] Read `PROGRESS.md` — Day 1 section
-- [ ] Confirm branch: `feature/domain-and-graph-day-1`
-  ```
-  git checkout main
-  git checkout -b feature/domain-and-graph-day-1
+- [ ] Confirm branch: `day/01-domain-graph-dijkstra`
+  ```bash
+  git checkout day/01-domain-graph-dijkstra
   ```
 
 ---
@@ -32,7 +31,7 @@ is the foundation that every other module depends on.
 ## Tasks
 
 ### 1. Algorithm Interface Contract
-Define in `com.deliveryoptimizer.algorithm.api`:
+Define in `com.routepulse.algorithm.api`:
 
 ```
 AlgorithmModule<I extends AlgorithmInput, O extends AlgorithmOutput>
@@ -44,7 +43,7 @@ AlgorithmComplexity (record: name, bigONotation)
 ```
 
 ### 2. Value Objects
-Define in `com.deliveryoptimizer.domain` using Java 21 `record`:
+Define in `com.routepulse.domain` using Java 21 `record`:
 
 ```
 NodeId(int value)
@@ -54,7 +53,7 @@ SimulatedTick(int value) — implements Comparable
 ```
 
 ### 3. Domain Entities
-Define in `com.deliveryoptimizer.domain`:
+Define in `com.routepulse.domain`:
 
 ```
 Node      — id: NodeId, label: String, x: int, y: int (canvas coords)
@@ -69,7 +68,7 @@ CargoCapacity — maxWeight: double, maxVolume: double
 ```
 
 ### 4. Graph Store
-Implement `com.deliveryoptimizer.state.GraphStore`:
+Implement `com.routepulse.state.GraphStore`:
 - Adjacency list: `Map<NodeId, List<Edge>>`
 - `getNeighbors(NodeId)` — returns outgoing edges
 - `updateEdgeWeight(NodeId from, NodeId to, int newWeight)` — mutates in place
@@ -77,14 +76,14 @@ Implement `com.deliveryoptimizer.state.GraphStore`:
 - Loaded from a hardcoded demo graph (25–30 nodes, two-cluster topology)
 
 ### 5. Distance Matrix
-Implement `com.deliveryoptimizer.state.DistanceMatrix`:
+Implement `com.routepulse.state.DistanceMatrix`:
 - Internal: `double[][] matrix` (30×30)
 - `get(NodeId from, NodeId to)` — O(1) lookup
 - `updateRow(NodeId source, double[] newDistances)` — updates one row
 - Pre-populated at initialization by running Dijkstra from all nodes
 
 ### 6. Dijkstra Module
-Implement `com.deliveryoptimizer.algorithm.dijkstra.DijkstraModule`
+Implement `com.routepulse.algorithm.dijkstra.DijkstraModule`
 implementing `AlgorithmModule<DijkstraInput, DijkstraOutput>`:
 
 Algorithm:
@@ -146,11 +145,12 @@ Assert paths through that edge update; all other paths unchanged.
 
 ## Post-Session
 
-```
+```bash
 git add .
 git commit -m "day 1: domain model, graph store, dijkstra module, 3 tests passing"
+git push origin day/01-domain-graph-dijkstra
 git checkout main
-git merge feature/domain-and-graph-day-1
+git merge day/01-domain-graph-dijkstra
 ```
 
 Update `MEMORY.md` and `PROGRESS.md` before closing.

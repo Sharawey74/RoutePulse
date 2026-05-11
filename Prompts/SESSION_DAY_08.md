@@ -9,19 +9,10 @@
 - [ ] Read `PROGRESS.md` — Day 7 complete, Day 8 section
 - [ ] Backend: `mvn test` — all tests pass
 - [ ] Frontend: `npm run dev` — no console errors
-- [ ] Confirm two branches:
-
-**Backend:**
-```bash
-git checkout main
-git checkout feature/backend-integration-metrics-day-7-8
-```
-
-**Frontend:**
-```bash
-git checkout main
-git checkout feature/frontend-ui-day-7-10
-```
+- [ ] Confirm branch: `day/08-metrics-report-map-canvas`
+  ```bash
+  git checkout day/08-metrics-report-map-canvas
+  ```
 
 ---
 
@@ -155,7 +146,7 @@ When `SimClock.currentTick() == maxTicks`:
 ### 7. Phase 3 Merge (end of today)
 ```bash
 git checkout main
-git merge feature/backend-integration-metrics-day-7-8
+git merge day/08-metrics-report-map-canvas
 git tag v0.3-phase3-complete
 ```
 
@@ -276,7 +267,7 @@ git commit -m "day 8 backend: metrics store, report generator, simulationComplet
 git add .
 git commit -m "day 8 frontend: map canvas, event log panel, main layout"
 git checkout main
-git merge feature/frontend-ui-day-7-10
+git merge day/08-metrics-report-map-canvas
 ```
 
 Update `MEMORY.md` and `PROGRESS.md` before closing.

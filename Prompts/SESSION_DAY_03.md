@@ -8,10 +8,9 @@
 - [ ] Read `MEMORY.md` — confirm Days 1–2 decisions
 - [ ] Read `PROGRESS.md` — Day 2 complete, Day 3 section
 - [ ] Confirm all previous tests pass: `mvn test`
-- [ ] Confirm branch: `feature/simulation-engine-day-2-3`
-  ```
-  git checkout main
-  git checkout -b feature/simulation-engine-day-2-3
+- [ ] Confirm branch: `day/03-state-layer-api-skeleton`
+  ```bash
+  git checkout day/03-state-layer-api-skeleton
   ```
 
 ---
@@ -34,49 +33,49 @@ must process a road event and update the distance matrix.
 ## Tasks
 
 ### 1. State Layer Objects
-Implement all in `com.deliveryoptimizer.state`:
+Implement all in `com.routepulse.state`:
 
 **`GraphStore`** — already partially built day 1; ensure it is the
 authoritative graph mutation target. Wrap all mutations in package-
 scoped methods (only `MutationApplier` calls mutation methods).
 
 **`DistanceMatrix`** — 30×30 `double[][]`. Methods:
-- `get(NodeId from, NodeId to)` â†’ double
+- `get(NodeId from, NodeId to)` -> double
 - `updateRow(int sourceIndex, double[] distances)` — package-scoped
-- `getRow(int sourceIndex)` â†’ `double[]`
+- `getRow(int sourceIndex)` -> `double[]`
 
 **`RouteRegistry`** — `Map<CourierId, Route>`:
-- `getRoute(CourierId)` â†’ `Route`
+- `getRoute(CourierId)` -> `Route`
 - `updateRoute(CourierId, Route)` — package-scoped
-- `getAllCouriers()` â†’ `Set<CourierId>`
+- `getAllCouriers()` -> `Set<CourierId>`
 
 **`ShadowRouteRegistry`** — identical structure to `RouteRegistry`,
 updated only by greedy insertions, never by DP.
 
 **`CargoRegistry`** — `Map<CourierId, List<CargoItem>>`:
-- `getManifest(CourierId)` â†’ `List<CargoItem>`
-- `getRemainingCapacity(CourierId)` â†’ `CargoCapacity`
+- `getManifest(CourierId)` -> `List<CargoItem>`
+- `getRemainingCapacity(CourierId)` -> `CargoCapacity`
 
 **`OrderRegistry`** — `Map<String, OrderStatus>`:
 - `OrderStatus` enum: PENDING, ASSIGNED, IN_TRANSIT, DELIVERED
-- `getStatus(String orderId)` â†’ `OrderStatus`
+- `getStatus(String orderId)` -> `OrderStatus`
 - `transition(String orderId, OrderStatus newStatus)` — package-scoped
 
 **`CourierRegistry`** — `Map<CourierId, Courier>`:
-- `getActiveCouriers()` â†’ `List<Courier>`
+- `getActiveCouriers()` -> `List<Courier>`
 - `deactivate(CourierId)` — package-scoped
 
 **`EventLogStore`** — append-only `List<EventLogEntry>`:
 - `append(EventLogEntry entry)` — package-scoped
-- `getAll()` â†’ unmodifiable list
-- `getLast(int n)` â†’ last n entries
+- `getAll()` -> unmodifiable list
+- `getLast(int n)` -> last n entries
 
 **`MetricsStore`** — `List<TickSnapshot>`:
 - `recordTick(TickSnapshot snapshot)` — package-scoped
-- `getAll()` â†’ unmodifiable list
+- `getAll()` -> unmodifiable list
 
 ### 2. SystemStateSnapshot (Immutable)
-Implement `com.deliveryoptimizer.state.snapshot.SystemStateSnapshot`
+Implement `com.routepulse.state.snapshot.SystemStateSnapshot`
 as an immutable deep copy of the current state. Algorithm modules
 receive this — never the live mutable state.
 
@@ -94,7 +93,7 @@ public record SystemStateSnapshot(
 ```
 
 ### 3. SnapshotFactory
-Implement `SnapshotFactory.create(StateLayer)` — produces
+Implement `com.routepulse.state.snapshot.SnapshotFactory` — produces
 `SystemStateSnapshot` by deep-copying all mutable state.
 Used by `SimulationEngine` after every tick.
 
@@ -130,7 +129,7 @@ case EdgeRemovalMutation m -> {
 via constructor (dependency injection, not `new`).
 
 ### 6. Spring Boot Application
-Set up `com.deliveryoptimizer.DeliveryOptimizerApplication`.
+Set up `com.routepulse.platform.RoutepulseApplication`.
 
 **`SimulationController`:**
 ```
@@ -144,12 +143,12 @@ POST /api/simulation/reset   — reinitialize to tick 0
 GET  /api/simulation/stream  — returns SseEmitter (skeleton only)
 ```
 
-**DTOs** in `com.deliveryoptimizer.api.dto`:
+**DTOs** in `com.routepulse.api.dto`:
 - `StateSnapshotDto` — JSON-serializable version of `SystemStateSnapshot`
 - `CourierDto`, `RouteDto`, `EdgeDto`, `OrderDto`
 
 ### 7. SimulationConfig
-Define `com.deliveryoptimizer.config.SimulationConfig` as a
+Define `com.routepulse.config.SimulationConfig` as a
 `@ConfigurationProperties` class:
 
 ```java
@@ -160,7 +159,9 @@ public record SimulationConfig(
     int quietPeriodTicks,
     int dpBudgetMs,
     int maxCouriers,
-    int bruteForceCapStops
+    int bruteForceCapStops,
+    double priorityWeight,
+    double minImprovementThreshold
 ) {}
 ```
 
@@ -214,7 +215,7 @@ Verify in application logs that:
 - [ ] Dijkstra runs **before** any other handler in the same tick
 - [ ] Spring Boot app starts: `mvn spring-boot:run`
 - [ ] `curl` verification steps produce correct log output
-- [ ] Phase 1 branch merges: `feature/domain-and-graph-day-1` â†’ `feature/simulation-engine-day-2-3` â†’ `main`
+- [ ] Phase 1 branch merges: `day/01-domain-graph-dijkstra` -> `day/03-engine-state-dtos` -> `main`
 - [ ] `MEMORY.md` updated
 - [ ] `PROGRESS.md` Day 3 checklist completed
 
@@ -234,8 +235,9 @@ Verify in application logs that:
 ```bash
 git add .
 git commit -m "day 3: state layer, road event handlers, spring boot skeleton"
+git push origin day/03-state-layer-api-skeleton
 git checkout main
-git merge feature/simulation-engine-day-2-3
+git merge day/03-state-layer-api-skeleton
 git tag v0.1-phase1-complete
 ```
 

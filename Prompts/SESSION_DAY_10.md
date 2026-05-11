@@ -11,8 +11,7 @@
 - [ ] Full 100-tick demo run — all panels populate correctly
 - [ ] Confirm branch: `day/10-scenarios-polish-delivery`
   ```bash
-  git checkout phase/5-polish
-  git checkout -b day/10-scenarios-polish-delivery
+  git checkout day/10-scenarios-polish-delivery
   ```
 
 ---
@@ -421,14 +420,8 @@ git add .
 git commit -m "day 10: scenarios, algorithm toggle, determinism test,
                docker finalization, readme, comparison report"
 
-git checkout phase/5-polish
-git merge day/10-scenarios-polish-delivery
-
-git checkout develop
-git merge phase/5-polish
-
 git checkout main
-git merge develop
+git merge day/10-scenarios-polish-delivery
 git tag v1.0-final
 git push origin main --tags
 ```

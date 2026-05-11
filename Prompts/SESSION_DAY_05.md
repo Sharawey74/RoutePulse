@@ -8,10 +8,9 @@
 - [ ] Read `MEMORY.md` — confirm Day 4 decisions
 - [ ] Read `PROGRESS.md` — Day 4 complete, Day 5 section
 - [ ] Confirm all tests pass: `mvn test`
-- [ ] Confirm branch: `feature/algorithm-modules-day-4-6`
-  ```
-  git checkout main
-  git checkout feature/algorithm-modules-day-4-6
+- [ ] Confirm branch: `day/05-bin-packing-strategies`
+  ```bash
+  git checkout day/05-bin-packing-strategies
   ```
 
 ---
@@ -33,7 +32,7 @@ and produce measurable approximation ratio differences between strategies.
 ## Tasks
 
 ### 1. PackingStrategy Interface
-Define in `com.deliveryoptimizer.algorithm.binpacking`:
+Define in `com.routepulse.algorithm.binpacking`:
 
 ```java
 public interface PackingStrategy {
@@ -65,7 +64,7 @@ A ratio of 1.0 is optimal. FFD guarantee: â‰¤ (11/9) â‰ˆ 1.22.
 For each item (in input order):
   Find first courier with remaining capacity â‰¥ item size
   Assign item to that courier
-  If no courier fits â†’ item goes to unassigned list
+  If no courier fits -> item goes to unassigned list
 ```
 
 ### 3. BestFitStrategy
@@ -74,7 +73,7 @@ For each item (in input order):
   Find courier where (remaining_capacity - item_size) is minimized
   but still â‰¥ 0 (tightest fit that works)
   Assign item to that courier
-  If no courier fits â†’ item goes to unassigned list
+  If no courier fits -> item goes to unassigned list
 ```
 
 ### 4. FirstFitDecreasingStrategy
@@ -88,7 +87,7 @@ why this produces better packing: large items are placed first,
 leaving small gaps for small items rather than large items not fitting.
 
 ### 5. BinPackingModule
-Implement `com.deliveryoptimizer.algorithm.binpacking.BinPackingModule`
+Implement `com.routepulse.algorithm.binpacking.BinPackingModule`
 implementing `AlgorithmModule<BinPackingInput, BinPackingOutput>`.
 
 **Always runs all 3 strategies on every call:**
@@ -110,7 +109,7 @@ The `operationType` flag distinguishes capacity validation
 For **capacity validation** (NEW_ORDER):
 - Run all 3 for metrics logging
 - Use FFD result for the actual capacity decision
-- If FFD says order fits â†’ proceed; if not â†’ trigger redistribution
+- If FFD says order fits -> proceed; if not -> trigger redistribution
 
 For **redistribution** (VEHICLE_BREAKDOWN):
 - Run all 3 for the comparison panel
@@ -199,11 +198,12 @@ Assert: results are identical both times.
 
 ## Post-Session
 
-```
+```bash
 git add .
 git commit -m "day 5: bin packing FF/BF/FFD, vehicle breakdown handler, 4 tests"
+git push origin day/05-bin-packing-strategies
 git checkout main
-git merge feature/algorithm-modules-day-4-6
+git merge day/05-bin-packing-strategies
 ```
 
 Update `MEMORY.md` and `PROGRESS.md` before closing.
